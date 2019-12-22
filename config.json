@@ -1,0 +1,15 @@
+{
+  "win": {
+    "width": 500,
+    "height": 500,
+    "caption": "My First App",
+    "clock": 40
+  },
+  "object": {
+    "x": 400,
+    "y": 300,
+    "width": 40,
+    "height": 60,
+    "vel": 5
+  }
+}
