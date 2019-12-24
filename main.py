@@ -7,133 +7,27 @@ from typing import List
 import random
 
 
-class ImageDrawable:
-    def __init__(self, x, y, image_path, win_size):
-        self.x = x
-        self.y = y
-        self.win_width, self.win_height = win_size
+# TODO: check what happened when image is missing!
 
+class ImageDrawable:
+    def __init__(self, x: int, y: int, image_path: str, vel: int, win_size: (int, int)):
         try:
             self.img = pygame.image.load(image_path)
         except:
             logging.error('can not find {}'.format(image_path))
             raise
-
-
-    @abstractmethod
-    def draw(self):
-        pass
-
-    @abstractmethod
-    def move(self):
-        pass
-
-
-class Parachute:
-
-    def __init__(self, x, y, win_height):
-        # TODO: check if img not available - maybe add try/catch
         self.x = x
         self.y = y
-        self.img = pygame.image.load(os.path.join('view', 'parachute.png'))
-        self.vel = 2
-        self.isPassed = False
-        self.win_height = win_height
-        self.img_height = self.img.get_height()
-        self.hit_box = pygame.Rect(self.x, self.y + self.img.get_width() - 10, self.img.get_width(), 10)
+        self.win_width, self.win_height = win_size
+        self.vel = vel
 
-    def move(self):
-        self.y += self.vel
-
-        self.hit_box = pygame.Rect(self.x, self.y + self.img.get_width() - 10, self.img.get_width(), 10)
-
-        if self.y > self.win_height:
-            self.isPassed = True
-
+    @abstractmethod
     def draw(self, window: pygame.Surface):
-        window.blit(self.img, (self.x, self.y))
-        pygame.draw.rect(window, (255, 0, 0), self.hit_box, 2)
+        pass
 
-
-class Airplane:
-
-    def __init__(self, win_width, para_list: List[Parachute]):
-        # TODO: check if img not available - maybe add try/catch
-        self.img = pygame.transform.flip(
-            pygame.transform.scale2x(pygame.image.load(os.path.join('view', 'airplane.png'))), True, False)
-        self.win_width = win_width
-        self.img_width = self.img.get_width()
-        self.x = self.win_width
-        self.y = 0
-        self.vel = 3
-        self.para_list = para_list
-        self.drop_parachute_x = random.randint(0 + self.img_width, self.win_width - self.img_width)
-        self.isDrop = False
-
+    @abstractmethod
     def move(self):
-        self.x -= self.vel
-        if self.x < self.drop_parachute_x and not self.isDrop:
-            # TODO: change win height to global and win width!
-            self.para_list.append(Parachute(self.x, 0, win_height=600))
-            self.isDrop = True
-        if self.x < -self.img_width:
-            self.isDrop = False
-            self.drop_parachute_x = random.randint(0 + self.img_width, self.win_width - self.img_width)
-            self.x = self.win_width
-
-    def draw(self, window: pygame.Surface):
-        window.blit(self.img, (self.x, self.y))
-
-
-class Player:
-
-    def __init__(self):
-        # TODO: check if img not available - maybe add try/catch
-        self.img = pygame.image.load(os.path.join('view', 'boat.png'))
-        self.x = 400  # TODO: change magic numbers
-        self.y = 600 - self.img.get_height()
-        self.vel = 3
-        self.hit_box = pygame.Rect(self.x, self.y + round(self.img.get_height() * 0.67), self.img.get_width(), 20)
-
-    def move(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT] and self.x > self.vel:
-            self.x -= self.vel
-
-        if keys[pygame.K_RIGHT] and self.x < 800 - self.vel - self.img.get_width():  # TODO: change magic numbers
-            self.x += self.vel
-
-        self.hit_box = pygame.Rect(self.x, self.y + round(self.img.get_height() * 0.67), self.img.get_width(), 20)
-
-    def draw(self, window: pygame.Surface):
-        window.blit(self.img, (self.x, self.y))
-        pygame.draw.rect(window, (255, 0, 0), self.hit_box, 2)
-
-
-class Base:
-    def __init__(self):
-        # TODO: check if img not available - maybe add try/catch
-        self.img1 = pygame.image.load(os.path.join('view', 'waves.png'))
-        self.img2 = pygame.transform.flip(self.img1, True, False)
-        self.width = self.img1.get_width()
-        self.y = 0
-        self.x1 = 0
-        self.x2 = -self.width
-        self.vel = 1
-
-    def move(self):
-        self.x1 += self.vel
-        self.x2 += self.vel
-        if self.x1 > self.width:
-            self.x1 = self.x2 - self.width
-
-        if self.x2 > self.width:
-            self.x2 = self.x1 - self.width
-
-    def draw(self, window):
-        window.blit(self.img1, (self.x1, self.y))
-        window.blit(self.img2, (self.x2, self.y))
+        pass
 
 
 class GameLogic:
@@ -146,7 +40,7 @@ class GameLogic:
         self.pause: bool = False
         self.END_GAME: bool = False
         self.para_list: List[Parachute] = list()
-        self.player = Player()
+        self.player = Player(300, 300, os.path.join('view', 'boat.png'), 3, self.win.get_size())
 
     def move_all(self):
         if not self.pause:
@@ -187,30 +81,141 @@ class GameLogic:
             pygame.display.update()
 
     def init(self):
-        # TODO: check how to create the list of images, maybe remove all variables s.t: base, player, and more
-        self.images.append(Base())
-        self.images.append(Airplane(self.win.get_width(), self.para_list))
+        self.images.append(Base(0, 0, os.path.join('view', 'waves.png'), 2, self.win.get_size()))
+        self.images.append(
+            Airplane(self.win.get_width(), 0, os.path.join('view', 'airplane.png'), 5, self.win.get_size(),
+                     self.add_para))
         self.images.append(self.player)
 
     def game_status(self):
-        for para in self.para_list:
-            # check for collisions
-            if self.player.hit_box.colliderect(para.hit_box):
-                self.score_update(10)
-                self.para_list.remove(para)
+        # check end Game (3 strikes)
+        if self.lives <= 0:
+            self.END_GAME = True
 
-            # check for lives updates
-            if para.isPassed:
-                self.para_list.remove(para)
-                self.lives -= 1
-                if self.lives <= 0:
-                    self.END_GAME = True
+        # check for collisions
+        for para in self.para_list:
+            if self.player.hit_box.colliderect(para.hit_box):
+                self.para_collide(para)
 
     def score_update(self, x):
         self.score += x
 
     def pause_update(self):
         self.pause = not self.pause
+
+    def add_para(self, x, y):
+        para = Parachute(x, y, image_path=os.path.join('view', 'parachute.png'), vel=3, win_size=self.win.get_size(),
+                         callback=self.para_fall)
+        self.para_list.append(para)
+
+    def para_fall(self, para):
+        self.lives -= 1
+        self.para_list.remove(para)
+
+    def para_collide(self, para):
+        self.score_update(10)  # TODO: magic number - change!
+        self.para_list.remove(para)
+
+
+class Parachute(ImageDrawable):
+
+    def __init__(self, x, y, image_path: str, vel: int, win_size: (int, int), callback):
+        super().__init__(x, y, image_path, vel, win_size)
+        self.isPassed = False
+        self.hit_box = pygame.Rect(self.x, self.y + self.img.get_width() - 10, self.img.get_width(), 10)
+        self.para_fall = callback
+
+    def move(self):
+        self.y += self.vel
+        self.hit_box = pygame.Rect(self.x, self.y + self.img.get_width() - 10, self.img.get_width(), 10)
+
+        # checks if parachute is out of window
+        if self.y > self.win_height:
+            self.para_fall(self)
+
+    def draw(self, window: pygame.Surface):
+        window.blit(self.img, (self.x, self.y))
+        # pygame.draw.rect(window, (255, 0, 0), self.hit_box, 2)
+
+
+class Airplane(ImageDrawable):
+
+    def __init__(self, x: int, y: int, image_path: str, vel: int, win_size: (int, int), callback):
+        super().__init__(x, y, image_path, vel, win_size)
+        # TODO: check this img!
+        # self.img = pygame.transform.flip(pygame.transform.scale2x(self.img)), True, False)
+        self.add_parachute = callback
+        self.drop_parachute_x = random.randint(0 + self.img.get_width(), self.win_width - self.img.get_width())
+        self.isDropped = False
+
+    def move(self):
+        self.x -= self.vel
+        if self.x < self.drop_parachute_x and not self.isDropped:
+            # TODO: check how to add parachute
+            # TODO: maybe make it event/ listener
+            # self.para_list.append(Parachute(self.x, self.y,))
+            self.add_parachute(self.x, self.y)
+            self.isDropped = True
+        if self.x < -self.img.get_width():
+            self.isDropped = False
+            self.drop_parachute_x = random.randint(0 + self.img.get_width(), self.win_width - self.img.get_width())
+            self.x = self.win_width
+
+    def draw(self, window: pygame.Surface):
+        window.blit(self.img, (self.x, self.y))
+
+
+class Player(ImageDrawable):
+
+    def __init__(self, x, y, image_path: str, vel: int, win_size: (int, int)):
+        super().__init__(x, y, image_path, vel, win_size)
+
+        # TODO: check if img not available - maybe add try/catch
+        # self.img = pygame.image.load(os.path.join('view', 'boat.png'))
+        # self.x = 400  # TODO: change magic numbers
+        # self.y = 600 - self.img.get_height()
+        # self.vel = 3
+        self.hit_box = pygame.Rect(self.x, self.y + round(self.img.get_height() * 0.67), self.img.get_width(), 20)
+
+    def move(self):
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_LEFT] and self.x > self.vel:
+            self.x -= self.vel
+
+        if keys[pygame.K_RIGHT] and self.x < self.win_width - self.vel - self.img.get_width():
+            self.x += self.vel
+
+        self.hit_box = pygame.Rect(self.x, self.y + round(self.img.get_height() * 0.67), self.img.get_width(), 20)
+
+    def draw(self, window: pygame.Surface):
+        window.blit(self.img, (self.x, self.y))
+        pygame.draw.rect(window, (255, 0, 0), self.hit_box, 2)
+
+
+class Base(ImageDrawable):
+    def __init__(self, x: int, y: int, image_path: str, vel: int, win_size: (int, int)):
+        super().__init__(x, y, image_path, vel, win_size)
+        self.img1 = pygame.image.load(os.path.join('view', 'waves.png'))
+        self.img2 = pygame.transform.flip(self.img1, True, False)
+        # self.width = self.img1.get_width()
+        # self.y = 0
+        self.x1 = 0
+        self.x2 = -self.img.get_width()
+        # self.vel = 1
+
+    def move(self):
+        self.x1 += self.vel
+        self.x2 += self.vel
+        if self.x1 > self.img.get_width():
+            self.x1 = self.x2 - self.img.get_width()
+
+        if self.x2 > self.img.get_width():
+            self.x2 = self.x1 - self.img.get_width()
+
+    def draw(self, window):
+        window.blit(self.img1, (self.x1, self.y))
+        window.blit(self.img2, (self.x2, self.y))
 
 
 def main() -> None:
@@ -230,11 +235,11 @@ def main() -> None:
                 run = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game.pause_update()
-        # check game logic status (update score, update life, remove finished parachutes, check collisions)
-
-        game.move_all()
 
         game.draw_all()
+
+        game.move_all()
+        # check game logic status (update score, update life, remove finished parachutes, check collisions)
 
         game.game_status()
 
