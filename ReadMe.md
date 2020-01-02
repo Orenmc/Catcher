@@ -12,7 +12,10 @@ please make sure that "images" folder and "config.json" file are there.
 python3 main.py
 ```
 
+<<<<<<< HEAD
 ### Future Work
 - make things looks better.
 - add animation.
 - update velocity of the boat and penguin based on passed time
+=======
+>>>>>>> origin/master
