@@ -1,15 +1,52 @@
 {
-  "win": {
-    "width": 500,
-    "height": 500,
-    "caption": "My First App",
+  "window": {
+    "width": 800,
+    "height": 600,
+    "caption": "Coding Challenge",
     "clock": 40
   },
-  "object": {
-    "x": 400,
-    "y": 300,
-    "width": 40,
-    "height": 60,
-    "vel": 5
+  "player": {
+    "path": [
+      "images",
+      "boat.png"
+    ],
+    "vel": 4
+  },
+  "background": {
+    "x": 0,
+    "y": 0,
+    "path": [
+      "images",
+      "waves.png"
+    ],
+    "vel": 2
+  },
+  "airplane": {
+    "vel": 6,
+    "path": [
+      "images",
+      "airplane.png"
+    ]
+  },
+  "parachute": {
+    "vel": 4,
+    "path": [
+      "images",
+      "parachute.png"
+    ]
+  },
+  "gameLogic": {
+    "lives": 3,
+    "score_update": 10
+  },
+  "style": {
+    "font": "david",
+    "font_bar_size": 30,
+    "font_info_size": 200,
+    "font_info_color": "#ff0000",
+    "font_bar_color": "#000000",
+    "bg_color": "#622fba",
+    "x_bar": 0,
+    "y_bar": 0
   }
 }

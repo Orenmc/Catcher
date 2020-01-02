@@ -1,3 +1,10 @@
 2019-12-20 00:49:10,111: INFO: just checking..
 2019-12-20 00:54:25,947: ERROR: config file is missing
 2019-12-20 00:58:00,357: ERROR: config file is missing
+2019-12-25 12:36:58,519: ERROR: can not find ['view', 'parachute.png']
+2019-12-25 12:47:31,972: ERROR: can not find view/waves.png
+2019-12-25 12:48:09,966: ERROR: can not find view/waves.png
+2019-12-25 12:49:16,517: ERROR: error? can not find view/waves.png
+2019-12-25 12:50:45,980: ERROR: error? can not find images/airplane.png
+2019-12-25 12:52:39,258: ERROR: can not find images/airplane.png - Couldn't open images/airplane.png
+2019-12-25 12:53:58,104: ERROR: Couldn't open images/airplane.png
